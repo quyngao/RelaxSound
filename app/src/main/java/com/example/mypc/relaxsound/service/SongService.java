@@ -72,6 +72,7 @@ public class SongService extends Service implements AudioManager.OnAudioFocusCha
     }
 
     public void pauseMusic() {
+
         for (int i = 0; i < PlayerConstants.SONGS_LIST.size(); i++) {
             PlayerConstants.SONGS_LIST.get(i).pause();
         }
@@ -96,6 +97,7 @@ public class SongService extends Service implements AudioManager.OnAudioFocusCha
     public void onDestroy() {
         stopMusic();
         PlayerConstants.SONGS_LIST = UtilFunctions.listOfSongs(getApplicationContext());
+        PlayerConstants.SONG_PAUSED = false;
         RelaxActivity.changeUI();
         super.onDestroy();
     }

@@ -189,7 +189,7 @@
                     android:gravity="center">
 
                     <ImageView
-                        android:id="@+id/img_sound1"
+                        android:id="@+id/img_s2b"
                         android:layout_width="@dimen/icon_size"
                         android:layout_height="@dimen/icon_size"
                         android:background="@drawable/s2b" />

@@ -53,7 +53,7 @@ public class RelaxActivity extends Activity implements SeekBar.OnSeekBarChangeLi
     static Object objectTime;
     static int time;
 
-    ImageView img_settime, img_share;
+    ImageView img_settime, img_share,img_s2b;
     LinearLayout root;
 
     static class ThreadTime {
@@ -223,6 +223,9 @@ public class RelaxActivity extends Activity implements SeekBar.OnSeekBarChangeLi
         tvTime.setTypeface(font_text);
         img_settime = (ImageView) findViewById(R.id.img_settime);
         img_share = (ImageView) findViewById(R.id.img_share);
+        img_s2b = (ImageView) findViewById(R.id.img_s2b);
+
+
         root = (LinearLayout) findViewById(R.id.root);
         img_settime.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -231,6 +234,17 @@ public class RelaxActivity extends Activity implements SeekBar.OnSeekBarChangeLi
                 endDialog.show();
             }
         });
+
+        img_s2b.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Uri uri = Uri.parse("https://play.google.com/store/apps/developer?id=S2B+Game+Studio");
+                Toast.makeText(context,"s2b",Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+                startActivity(intent);
+            }
+        });
+
         img_share.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -281,6 +295,7 @@ public class RelaxActivity extends Activity implements SeekBar.OnSeekBarChangeLi
         btnPlay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 synchronized (objectTime) {
                     objectTime.notifyAll();
                 }
@@ -290,6 +305,7 @@ public class RelaxActivity extends Activity implements SeekBar.OnSeekBarChangeLi
         btnPause.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                bar.setVisibility(View.INVISIBLE);
                 synchronized (objectTime) {
                     objectTime.notifyAll();
                 }
@@ -319,9 +335,8 @@ public class RelaxActivity extends Activity implements SeekBar.OnSeekBarChangeLi
             btnPlay.setVisibility(View.GONE);
         }
     }
-
     public static void changeUI() {
-        if (location >= 0) {
+        if (location >= 0&&PlayerConstants.SONG_PAUSED==false) {
             bar.setProgress(PlayerConstants.SONGS_LIST.get(location).getVolume());
             bar.setVisibility(View.VISIBLE);
             Handler handler = new Handler();
