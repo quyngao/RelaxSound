@@ -27,6 +27,7 @@ public class Settime_Dialog extends Dialog {
     Context mcontext;
     int time;
     public Settime_Dialog(final Context context, final int timesx, final Handler handler) {
+
         super(context);
         this.setCancelable(false);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -34,6 +35,8 @@ public class Settime_Dialog extends Dialog {
         getWindow().setBackgroundDrawableResource(R.color.trongsuot);
         mcontext = context;
         this.time = timesx;
+
+        time = time /60;
         tv_custime = (TextView) findViewById(R.id.tv_custime);
         et_custime = (TextView) findViewById(R.id.et_custume);
         bt_timepicker = (ImageView) findViewById(R.id.bt_timepicker);

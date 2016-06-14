@@ -42,6 +42,50 @@ public class SongService extends Service implements AudioManager.OnAudioFocusCha
     private static boolean currentVersionSupportBigNotification = false;
     private static boolean currentVersionSupportLockScreenControls = false;
 
+    static Object objectTime;
+    static int time;
+
+    static class ThreadTime {
+        public ThreadTime() {
+            Time.start();
+        }
+
+        Thread Time = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while (true) {
+                    synchronized (objectTime) {
+                        while (PlayerConstants.SONG_PAUSED) {
+                            try {
+                                objectTime.wait();
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                    try {
+                        Time.sleep(1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    Message message = hTime.obtainMessage();
+                    message.arg1 = 1;
+                    hTime.sendMessage(message);
+                }
+            }
+        });
+
+        Handler hTime = new Handler() {
+            @Override
+            public void handleMessage(Message msg) {
+                super.handleMessage(msg);
+                time--;
+//                Message message = hTime.obtainMessage();
+//                message.arg1 = time;
+//                PlayerConstants.PROGRESSBAR_HANDLER.sendMessage(message);
+            }
+        };
+    }
 
     @Override
     public void onCreate() {
@@ -49,6 +93,7 @@ public class SongService extends Service implements AudioManager.OnAudioFocusCha
         currentVersionSupportBigNotification = UtilFunctions.currentVersionSupportBigNotification();
         currentVersionSupportLockScreenControls = UtilFunctions.currentVersionSupportLockScreenControls();
         super.onCreate();
+
     }
 
 
@@ -113,8 +158,14 @@ public class SongService extends Service implements AudioManager.OnAudioFocusCha
             if (currentVersionSupportLockScreenControls) {
                 RegisterRemoteClient();
             }
+            objectTime = new Object();
             if (checkplay() >= 0) {
                 PlayerConstants.SONG_PAUSED = false;
+                if(PlayerConstants.TIME>0){
+                    time = PlayerConstants.TIME;
+                    PlayerConstants.SONG_PAUSED=false;
+                    new ThreadTime();
+                }
                 playMusic();
             }
             RelaxActivity.changeUI();
@@ -123,11 +174,15 @@ public class SongService extends Service implements AudioManager.OnAudioFocusCha
             PlayerConstants.SONG_CHANGE_HANDLER = new Handler(new Handler.Callback() {
                 @Override
                 public boolean handleMessage(Message msg) {
-
                     if (checkplay() >= 0) PlayerConstants.SONG_PAUSED = false;
                     else PlayerConstants.SONG_PAUSED = true;
                     newNotification();
                     playSong();
+                    if(PlayerConstants.TIME>0){
+                        time = PlayerConstants.TIME;
+                        PlayerConstants.SONG_PAUSED=false;
+                        new ThreadTime();
+                    }
                     RelaxActivity.changeUI();
                     return false;
                 }
@@ -146,6 +201,9 @@ public class SongService extends Service implements AudioManager.OnAudioFocusCha
                         }
                         playMusic();
                     } else if (message.equalsIgnoreCase(getResources().getString(R.string.pause))) {
+                        synchronized (objectTime) {
+                            objectTime.notifyAll();
+                        }
                         PlayerConstants.SONG_PAUSED = true;
                         if (currentVersionSupportLockScreenControls) {
                             remoteControlClient.setPlaybackState(RemoteControlClient.PLAYSTATE_PAUSED);

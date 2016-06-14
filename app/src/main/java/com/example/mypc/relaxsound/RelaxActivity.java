@@ -49,60 +49,8 @@ public class RelaxActivity extends Activity implements SeekBar.OnSeekBarChangeLi
     ScrollView scroll;
     static int location = -1;
 
-
-    static Object objectTime;
-    static int time;
-
-    ImageView img_settime, img_share,img_s2b;
+    ImageView img_settime, img_share, img_s2b;
     LinearLayout root;
-
-    static class ThreadTime {
-        public ThreadTime() {
-            Time.start();
-        }
-
-        Thread Time = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                while (true) {
-                    synchronized (objectTime) {
-                        while (PlayerConstants.SONG_PAUSED) {
-                            try {
-                                objectTime.wait();
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    }
-                    try {
-                        Time.sleep(1000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    Message message = hTime.obtainMessage();
-                    message.arg1 = 1;
-                    hTime.sendMessage(message);
-                }
-            }
-        });
-
-        Handler hTime = new Handler() {
-            @Override
-            public void handleMessage(Message msg) {
-                super.handleMessage(msg);
-                time--;
-                sbar.setProgress(time);
-                if (time == 0 && PlayerConstants.SONG_PAUSED == false) {
-                    layoutControl.setVisibility(View.INVISIBLE);
-                    PlayerConstants.TIME = 0;
-                    tvTime.setText(settime(0));
-                    bar.setVisibility(View.INVISIBLE);
-                    Intent i = new Intent(context, SongService.class);
-                    context.stopService(i);
-                }
-            }
-        };
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -112,7 +60,6 @@ public class RelaxActivity extends Activity implements SeekBar.OnSeekBarChangeLi
         setFinishOnTouchOutside(false);
         setContentView(R.layout.relax_activity);
         context = RelaxActivity.this;
-        objectTime = new Object();
         init();
     }
 
@@ -127,6 +74,7 @@ public class RelaxActivity extends Activity implements SeekBar.OnSeekBarChangeLi
         setListItems();
         setListeners();
     }
+
     private static void setListItems() {
         listBtn = UtilFunctions.getListBtn(context);
         gridLayout.removeAllViews();
@@ -142,6 +90,7 @@ public class RelaxActivity extends Activity implements SeekBar.OnSeekBarChangeLi
             i.setOnClickListener(Click);
         }
     }
+
     static View.OnClickListener Click = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -155,11 +104,6 @@ public class RelaxActivity extends Activity implements SeekBar.OnSeekBarChangeLi
                 location = position;
                 PlayerConstants.SONGS_LIST.get(position).setIsplay(true);
                 layoutControl.setVisibility(View.VISIBLE);
-                if(PlayerConstants.TIME>0){
-                    time = PlayerConstants.TIME;
-                    PlayerConstants.SONG_PAUSED=false;
-                    new ThreadTime();
-                }
             }
             boolean isServiceRunning = UtilFunctions.isServiceRunning(SongService.class.getName(), context);
             if (!isServiceRunning) {
@@ -185,12 +129,33 @@ public class RelaxActivity extends Activity implements SeekBar.OnSeekBarChangeLi
         super.onResume();
         try {
             boolean isServiceRunning = UtilFunctions.isServiceRunning(SongService.class.getName(), getApplicationContext());
-            if (isServiceRunning) {
-            } else {
+            if (isServiceRunning == false) {
                 bar.setVisibility(View.INVISIBLE);
+            } else {
+                if (PlayerConstants.TIME > 0) {
+                    tvTime.setText(settime(PlayerConstants.TIME));
+                    setProgessBar(PlayerConstants.TIME);
+                    PlayerConstants.PROGRESSBAR_HANDLER = new Handler() {
+                        @Override
+                        public void handleMessage(Message msg) {
+                            super.handleMessage(msg);
+                            int time = msg.arg1;
+                            Toast.makeText(context,"time"+time,Toast.LENGTH_SHORT).show();
+                            sbar.setProgress(time);
+                            if (time == 0 && PlayerConstants.SONG_PAUSED == false) {
+                                layoutControl.setVisibility(View.INVISIBLE);
+                                PlayerConstants.TIME = 0;
+                                tvTime.setText(settime(0));
+                                bar.setVisibility(View.INVISIBLE);
+                                Intent i = new Intent(context, SongService.class);
+                                context.stopService(i);
+                            }
+                        }
+                    };
+
+                }
             }
             changeUI();
-            tvTime.setText(PlayerConstants.TIME);
         } catch (Exception e) {
         }
     }
@@ -239,7 +204,7 @@ public class RelaxActivity extends Activity implements SeekBar.OnSeekBarChangeLi
             @Override
             public void onClick(View v) {
                 Uri uri = Uri.parse("https://play.google.com/store/apps/developer?id=S2B+Game+Studio");
-                Toast.makeText(context,"s2b",Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, "s2b", Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(Intent.ACTION_VIEW, uri);
                 startActivity(intent);
             }
@@ -260,6 +225,7 @@ public class RelaxActivity extends Activity implements SeekBar.OnSeekBarChangeLi
             }
         });
     }
+
     private Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -267,7 +233,7 @@ public class RelaxActivity extends Activity implements SeekBar.OnSeekBarChangeLi
             int time = msg.arg1;
             tvTime.setText(settime(time));
             PlayerConstants.TIME = time;
-            Toast.makeText(context,"time"+time,Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, "time" + time, Toast.LENGTH_SHORT).show();
             setProgessBar(time);
         }
     };
@@ -295,10 +261,6 @@ public class RelaxActivity extends Activity implements SeekBar.OnSeekBarChangeLi
         btnPlay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                synchronized (objectTime) {
-                    objectTime.notifyAll();
-                }
                 Controls.playControl(context);
             }
         });
@@ -306,9 +268,7 @@ public class RelaxActivity extends Activity implements SeekBar.OnSeekBarChangeLi
             @Override
             public void onClick(View v) {
                 bar.setVisibility(View.INVISIBLE);
-                synchronized (objectTime) {
-                    objectTime.notifyAll();
-                }
+
                 Controls.pauseControl(context);
             }
         });
@@ -335,8 +295,9 @@ public class RelaxActivity extends Activity implements SeekBar.OnSeekBarChangeLi
             btnPlay.setVisibility(View.GONE);
         }
     }
+
     public static void changeUI() {
-        if (location >= 0&&PlayerConstants.SONG_PAUSED==false) {
+        if (location >= 0 && PlayerConstants.SONG_PAUSED == false) {
             bar.setProgress(PlayerConstants.SONGS_LIST.get(location).getVolume());
             bar.setVisibility(View.VISIBLE);
             Handler handler = new Handler();
