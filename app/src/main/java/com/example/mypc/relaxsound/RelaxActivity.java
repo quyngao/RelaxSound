@@ -26,7 +26,6 @@ import android.widget.ProgressBar;
 import android.widget.ScrollView;
 import android.widget.SeekBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.mypc.relaxsound.controls.Controls;
 import com.example.mypc.relaxsound.service.SongService;
@@ -89,6 +88,21 @@ public class RelaxActivity extends Activity implements SeekBar.OnSeekBarChangeLi
             gridLayout.addView(i);
             i.setOnClickListener(Click);
         }
+        PlayerConstants.PROGRESSBAR_HANDLER = new Handler(){
+            @Override
+            public void handleMessage(Message msg){
+                int time = (int) msg.obj;
+                sbar.setProgress(time);
+                if (time == 0 && PlayerConstants.SONG_PAUSED == false) {
+                    layoutControl.setVisibility(View.INVISIBLE);
+                    PlayerConstants.TIME = 0;
+                    tvTime.setText(settime(0));
+                    bar.setVisibility(View.INVISIBLE);
+                    Intent i = new Intent(context, SongService.class);
+                    context.stopService(i);
+                }
+            }
+        };
     }
 
     static View.OnClickListener Click = new View.OnClickListener() {
@@ -121,6 +135,7 @@ public class RelaxActivity extends Activity implements SeekBar.OnSeekBarChangeLi
                 context.stopService(i);
             }
 
+
         }
     };
 
@@ -135,23 +150,25 @@ public class RelaxActivity extends Activity implements SeekBar.OnSeekBarChangeLi
                 if (PlayerConstants.TIME > 0) {
                     tvTime.setText(settime(PlayerConstants.TIME));
                     setProgessBar(PlayerConstants.TIME);
-                    PlayerConstants.PROGRESSBAR_HANDLER = new Handler() {
-                        @Override
-                        public void handleMessage(Message msg) {
-                            super.handleMessage(msg);
-                            int time = msg.arg1;
-                            Toast.makeText(context,"time"+time,Toast.LENGTH_SHORT).show();
-                            sbar.setProgress(time);
-                            if (time == 0 && PlayerConstants.SONG_PAUSED == false) {
-                                layoutControl.setVisibility(View.INVISIBLE);
-                                PlayerConstants.TIME = 0;
-                                tvTime.setText(settime(0));
-                                bar.setVisibility(View.INVISIBLE);
-                                Intent i = new Intent(context, SongService.class);
-                                context.stopService(i);
-                            }
-                        }
-                    };
+//                    PlayerConstants.PROGRESSBAR_HANDLER = new Handler() {
+//                        @Override
+//                        public void handleMessage(Message msg) {
+//                            super.handleMessage(msg);
+//                            int time = msg.arg1;
+//                            Toast.makeText(context,"time"+time,Toast.LENGTH_SHORT).show();
+//                            sbar.setProgress(time);
+//                            if (time == 0 && PlayerConstants.SONG_PAUSED == false) {
+//                                layoutControl.setVisibility(View.INVISIBLE);
+//                                PlayerConstants.TIME = 0;
+//                                tvTime.setText(settime(0));
+//                                bar.setVisibility(View.INVISIBLE);
+//                                Intent i = new Intent(context, SongService.class);
+//                                context.stopService(i);
+//                            }
+//                        }
+//                    };
+
+
 
                 }
             }
@@ -204,7 +221,6 @@ public class RelaxActivity extends Activity implements SeekBar.OnSeekBarChangeLi
             @Override
             public void onClick(View v) {
                 Uri uri = Uri.parse("https://play.google.com/store/apps/developer?id=S2B+Game+Studio");
-                Toast.makeText(context, "s2b", Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(Intent.ACTION_VIEW, uri);
                 startActivity(intent);
             }
@@ -233,7 +249,6 @@ public class RelaxActivity extends Activity implements SeekBar.OnSeekBarChangeLi
             int time = msg.arg1;
             tvTime.setText(settime(time));
             PlayerConstants.TIME = time;
-            Toast.makeText(context, "time" + time, Toast.LENGTH_SHORT).show();
             setProgessBar(time);
         }
     };

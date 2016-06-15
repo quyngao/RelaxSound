@@ -80,9 +80,11 @@ public class SongService extends Service implements AudioManager.OnAudioFocusCha
             public void handleMessage(Message msg) {
                 super.handleMessage(msg);
                 time--;
-//                Message message = hTime.obtainMessage();
-//                message.arg1 = time;
-//                PlayerConstants.PROGRESSBAR_HANDLER.sendMessage(message);
+                try{
+                    PlayerConstants.PROGRESSBAR_HANDLER.sendMessage(PlayerConstants.PROGRESSBAR_HANDLER.obtainMessage(0,time));
+                }catch(Exception e){
+                    e.printStackTrace();
+                }
             }
         };
     }
@@ -195,7 +197,9 @@ public class SongService extends Service implements AudioManager.OnAudioFocusCha
 
                     if (message.equalsIgnoreCase(getResources().getString(R.string.play))) {
                         PlayerConstants.SONG_PAUSED = false;
-
+                        synchronized (objectTime) {
+                            objectTime.notifyAll();
+                        }
                         if (currentVersionSupportLockScreenControls) {
                             remoteControlClient.setPlaybackState(RemoteControlClient.PLAYSTATE_PLAYING);
                         }
