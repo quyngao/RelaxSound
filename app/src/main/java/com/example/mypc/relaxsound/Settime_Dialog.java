@@ -41,7 +41,7 @@ public class Settime_Dialog extends Dialog {
         et_custime = (TextView) findViewById(R.id.et_custume);
         bt_timepicker = (ImageView) findViewById(R.id.bt_timepicker);
 
-        bt_timepicker.setOnClickListener(new View.OnClickListener() {
+        et_custime.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 for (int i = 0; i < list_time.size(); i++) {
@@ -64,8 +64,12 @@ public class Settime_Dialog extends Dialog {
                 tpd.show();
             }
         });
-
-
+        bt_timepicker.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Settime_Dialog.this.dismiss();
+            }
+        });
         ImageView img_time15, img_time30, img_time45, img_time1h, img_time2h, img_time3h;
         img_time15 = (ImageView) findViewById(R.id.img_time15);
         img_time30 = (ImageView) findViewById(R.id.img_time30);
@@ -121,6 +125,7 @@ public class Settime_Dialog extends Dialog {
                 } else
                     list_time.get(i).setBackgroundResource(R.drawable.bg_time);
             }
+            Settime_Dialog.this.dismiss();
         }
     };
 

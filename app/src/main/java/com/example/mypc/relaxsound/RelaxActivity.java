@@ -38,7 +38,6 @@ import java.util.List;
 public class RelaxActivity extends Activity implements SeekBar.OnSeekBarChangeListener {
     static Button btnPause, btnPlay, btnStop;
     static TextView tvTime;
-    static LinearLayout layoutControl;
     static Context context;
     static SeekBar bar;
     static ProgressBar sbar;
@@ -62,13 +61,24 @@ public class RelaxActivity extends Activity implements SeekBar.OnSeekBarChangeLi
         init();
     }
 
+    public static void setFirstState() {
+        btnPause.setEnabled(false);
+        btnPlay.setEnabled(false);
+        btnStop.setEnabled(false);
+    }
+
+    public static void unSetFirstState() {
+        btnPause.setEnabled(true);
+        btnPlay.setEnabled(true);
+        btnStop.setEnabled(true);
+    }
+
     private void init() {
         getViews();
-        layoutControl.setVisibility(View.INVISIBLE);
         if (PlayerConstants.SONGS_LIST.size() <= 0) {
             PlayerConstants.SONGS_LIST = UtilFunctions.listOfSongs(getApplicationContext());
         } else {
-            if (SongService.checkplay() > 0) layoutControl.setVisibility(View.VISIBLE);
+            if (SongService.checkplay() > 0) unSetFirstState();
         }
         setListItems();
         setListeners();
@@ -88,13 +98,13 @@ public class RelaxActivity extends Activity implements SeekBar.OnSeekBarChangeLi
             gridLayout.addView(i);
             i.setOnClickListener(Click);
         }
-        PlayerConstants.PROGRESSBAR_HANDLER = new Handler(){
+        PlayerConstants.PROGRESSBAR_HANDLER = new Handler() {
             @Override
-            public void handleMessage(Message msg){
+            public void handleMessage(Message msg) {
                 int time = (int) msg.obj;
                 sbar.setProgress(time);
                 if (time == 0 && PlayerConstants.SONG_PAUSED == false) {
-                    layoutControl.setVisibility(View.INVISIBLE);
+
                     PlayerConstants.TIME = 0;
                     tvTime.setText(settime(0));
                     bar.setVisibility(View.INVISIBLE);
@@ -117,7 +127,7 @@ public class RelaxActivity extends Activity implements SeekBar.OnSeekBarChangeLi
             } else {
                 location = position;
                 PlayerConstants.SONGS_LIST.get(position).setIsplay(true);
-                layoutControl.setVisibility(View.VISIBLE);
+                unSetFirstState();
             }
             boolean isServiceRunning = UtilFunctions.isServiceRunning(SongService.class.getName(), context);
             if (!isServiceRunning) {
@@ -127,7 +137,7 @@ public class RelaxActivity extends Activity implements SeekBar.OnSeekBarChangeLi
                 PlayerConstants.SONG_CHANGE_HANDLER.sendMessage(PlayerConstants.SONG_CHANGE_HANDLER.obtainMessage());
             }
             if (SongService.checkplay() == -1) {
-                layoutControl.setVisibility(View.INVISIBLE);
+                setFirstState();
                 PlayerConstants.TIME = 0;
                 tvTime.setText(settime(0));
                 bar.setVisibility(View.INVISIBLE);
@@ -150,26 +160,6 @@ public class RelaxActivity extends Activity implements SeekBar.OnSeekBarChangeLi
                 if (PlayerConstants.TIME > 0) {
                     tvTime.setText(settime(PlayerConstants.TIME));
                     setProgessBar(PlayerConstants.TIME);
-//                    PlayerConstants.PROGRESSBAR_HANDLER = new Handler() {
-//                        @Override
-//                        public void handleMessage(Message msg) {
-//                            super.handleMessage(msg);
-//                            int time = msg.arg1;
-//                            Toast.makeText(context,"time"+time,Toast.LENGTH_SHORT).show();
-//                            sbar.setProgress(time);
-//                            if (time == 0 && PlayerConstants.SONG_PAUSED == false) {
-//                                layoutControl.setVisibility(View.INVISIBLE);
-//                                PlayerConstants.TIME = 0;
-//                                tvTime.setText(settime(0));
-//                                bar.setVisibility(View.INVISIBLE);
-//                                Intent i = new Intent(context, SongService.class);
-//                                context.stopService(i);
-//                            }
-//                        }
-//                    };
-
-
-
                 }
             }
             changeUI();
@@ -190,7 +180,6 @@ public class RelaxActivity extends Activity implements SeekBar.OnSeekBarChangeLi
         bar = (SeekBar) findViewById(R.id.sbar);
         tvTime = (TextView) findViewById(R.id.tv_time);
         gridLayout = (GridLayout) findViewById(R.id.grid);
-        layoutControl = (LinearLayout) findViewById(R.id.layout_control);
         sbar = (ProgressBar) findViewById(R.id.sbars);
         sbar.getProgressDrawable().setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_IN);
         bar.getProgressDrawable().setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_IN);
@@ -254,6 +243,7 @@ public class RelaxActivity extends Activity implements SeekBar.OnSeekBarChangeLi
     };
 
     public static String settime(int x) {
+        x = x / 60;
         if (x == 0) return ".. : ..";
         int h = x / 60;
         int m = x % 60;
@@ -290,7 +280,7 @@ public class RelaxActivity extends Activity implements SeekBar.OnSeekBarChangeLi
         btnStop.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                layoutControl.setVisibility(View.INVISIBLE);
+                setFirstState();
                 PlayerConstants.TIME = 0;
                 tvTime.setText(settime(0));
                 setProgessBar(PlayerConstants.TIME);
