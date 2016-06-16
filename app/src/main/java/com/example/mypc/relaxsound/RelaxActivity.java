@@ -187,7 +187,14 @@ public class RelaxActivity extends Activity implements SeekBar.OnSeekBarChangeLi
             boolean isServiceRunning = UtilFunctions.isServiceRunning(SongService.class.getName(), getApplicationContext());
             if (isServiceRunning) {
             } else {
+<<<<<<< Updated upstream
                 bar.setVisibility(View.INVISIBLE);
+=======
+                if (PlayerConstants.TIME > 0) {
+                    tvTime.setText(settime(PlayerConstants.TIME));
+                    setProgessBar(PlayerConstants.TIME);
+                }
+>>>>>>> Stashed changes
             }
             changeUI();
             tvTime.setText(PlayerConstants.TIME);
@@ -269,10 +276,14 @@ public class RelaxActivity extends Activity implements SeekBar.OnSeekBarChangeLi
             PlayerConstants.TIME = time;
             Toast.makeText(context,"time"+time,Toast.LENGTH_SHORT).show();
             setProgessBar(time);
+            if(PlayerConstants.SONG_PAUSED==false){
+                PlayerConstants.SONG_CHANGE_HANDLER.sendMessage(PlayerConstants.SONG_CHANGE_HANDLER.obtainMessage());
+            }
         }
     };
 
     public static String settime(int x) {
+        x=x/60;
         if (x == 0) return ".. : ..";
         int h = x / 60;
         int m = x % 60;
