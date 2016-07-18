@@ -10,7 +10,7 @@ import java.util.ArrayList;
 public class PlayerConstants {
     public static ArrayList<MediaItem> SONGS_LIST = new ArrayList<MediaItem>();
     public static int TIME= 0;
-
+    public static int SONG_NUMBER = -1;
     public static boolean SONG_PAUSED = true;
     public static Handler PLAY_PAUSE_HANDLER;
     public static Handler SONG_CHANGE_HANDLER ;

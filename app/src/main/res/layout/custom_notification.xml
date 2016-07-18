@@ -29,7 +29,7 @@
 
             <TextView
                 android:id="@+id/textSongName"
-                android:layout_width="match_parent"
+                android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:ellipsize="marquee"
                 android:fadingEdge="horizontal"
@@ -52,15 +52,15 @@
 
             <Button
                 android:id="@+id/btnPause"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
                 android:layout_margin="5dp"
                 android:background="@drawable/pause" />
 
             <Button
                 android:id="@+id/btnPlay"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
                 android:layout_margin="5dp"
                 android:background="@drawable/play"
                 android:visibility="gone" />
@@ -69,8 +69,8 @@
 
         <Button
             android:id="@+id/btnDelete"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
             android:layout_marginLeft="5dp"
             android:background="@drawable/clear" />
     </LinearLayout>

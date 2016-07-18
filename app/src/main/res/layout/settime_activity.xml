@@ -67,7 +67,7 @@
                                 android:id="@+id/img_time15"
                                 android:layout_width="@dimen/logo_h"
                                 android:layout_height="@dimen/logo_h"
-                                android:background="@drawable/bg_time"
+                                android:background="@drawable/bg_timecu"
                                 android:src="@drawable/ic_time15" />
                         </LinearLayout>
 
@@ -81,7 +81,7 @@
                                 android:id="@+id/img_time30"
                                 android:layout_width="@dimen/logo_h"
                                 android:layout_height="@dimen/logo_h"
-                                android:background="@drawable/bg_timen"
+                                android:background="@drawable/bg_timecu"
                                 android:src="@drawable/ic_time30" />
                         </LinearLayout>
 
@@ -95,7 +95,7 @@
                                 android:id="@+id/img_time45"
                                 android:layout_width="@dimen/logo_h"
                                 android:layout_height="@dimen/logo_h"
-                                android:background="@drawable/bg_timen"
+                                android:background="@drawable/bg_timecu"
                                 android:src="@drawable/ic_time45" />
                         </LinearLayout>
                     </LinearLayout>
@@ -117,7 +117,7 @@
                                 android:id="@+id/img_time1h"
                                 android:layout_width="@dimen/logo_h"
                                 android:layout_height="@dimen/logo_h"
-                                android:background="@drawable/bg_timen"
+                                android:background="@drawable/bg_timecu"
                                 android:src="@drawable/ic_time1h" />
                         </LinearLayout>
 
@@ -131,7 +131,7 @@
                                 android:id="@+id/img_time2h"
                                 android:layout_width="@dimen/logo_h"
                                 android:layout_height="@dimen/logo_h"
-                                android:background="@drawable/bg_timen"
+                                android:background="@drawable/bg_timecu"
                                 android:src="@drawable/ic_time2h" />
                         </LinearLayout>
 
@@ -145,7 +145,7 @@
                                 android:id="@+id/img_time3h"
                                 android:layout_width="@dimen/logo_h"
                                 android:layout_height="@dimen/logo_h"
-                                android:background="@drawable/bg_timen"
+                                android:background="@drawable/bg_timecu"
                                 android:src="@drawable/ic_time3h" />
                         </LinearLayout>
                     </LinearLayout>
@@ -154,7 +154,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
-                        android:background="@drawable/bg_timecu"
+                        android:background="@drawable/bg_time"
                         android:orientation="vertical"
                         android:padding="5dp"
                         android:layout_marginLeft="10dp"

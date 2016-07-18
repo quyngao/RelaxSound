@@ -45,7 +45,7 @@ public class Settime_Dialog extends Dialog {
             @Override
             public void onClick(View v) {
                 for (int i = 0; i < list_time.size(); i++) {
-                        list_time.get(i).setBackgroundResource(R.drawable.bg_time);
+                        list_time.get(i).setBackgroundResource(R.drawable.bg_timecu);
                 }
                 TimePickerDialog tpd = new TimePickerDialog(mcontext,
                         new TimePickerDialog.OnTimeSetListener() {
@@ -123,7 +123,7 @@ public class Settime_Dialog extends Dialog {
                     time = (int) v.getTag();
                     list_time.get(i).setBackgroundResource(R.drawable.bg_timec);
                 } else
-                    list_time.get(i).setBackgroundResource(R.drawable.bg_time);
+                    list_time.get(i).setBackgroundResource(R.drawable.bg_timecu);
             }
             Settime_Dialog.this.dismiss();
         }

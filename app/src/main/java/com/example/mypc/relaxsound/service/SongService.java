@@ -31,7 +31,6 @@ import com.example.mypc.relaxsound.util.UtilFunctions;
  */
 public class SongService extends Service implements AudioManager.OnAudioFocusChangeListener {
 
-    String LOG_CLASS = "SongService";
     int NOTIFICATION_ID = 1111;
     public static final String NOTIFY_DELETE = "com.example.mypc.relaxsound.delete";
     public static final String NOTIFY_PAUSE = "com.example.mypc.relaxsound.pause";
@@ -142,14 +141,13 @@ public class SongService extends Service implements AudioManager.OnAudioFocusCha
 
     @Override
     public void onDestroy() {
+        PlayerConstants.TIME =0;
         stopMusic();
         PlayerConstants.SONGS_LIST = UtilFunctions.listOfSongs(getApplicationContext());
         PlayerConstants.SONG_PAUSED = false;
         RelaxActivity.changeUI();
         super.onDestroy();
     }
-
-
     @SuppressLint("NewApi")
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
@@ -168,7 +166,7 @@ public class SongService extends Service implements AudioManager.OnAudioFocusCha
                     PlayerConstants.SONG_PAUSED=false;
                     new ThreadTime();
                 }
-                playMusic();
+                if(PlayerConstants.SONG_NUMBER>=0)PlayerConstants.SONGS_LIST.get(PlayerConstants.SONG_NUMBER).play();
             }
             RelaxActivity.changeUI();
             newNotification();
@@ -306,7 +304,7 @@ public class SongService extends Service implements AudioManager.OnAudioFocusCha
             UpdateMetadata();
             remoteControlClient.setPlaybackState(RemoteControlClient.PLAYSTATE_PLAYING);
         }
-        playMusic();
+        if(PlayerConstants.SONG_NUMBER>=0)PlayerConstants.SONGS_LIST.get(PlayerConstants.SONG_NUMBER).play();
     }
 
     @SuppressLint("NewApi")

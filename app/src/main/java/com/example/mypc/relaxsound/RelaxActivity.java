@@ -31,6 +31,9 @@ import com.example.mypc.relaxsound.controls.Controls;
 import com.example.mypc.relaxsound.service.SongService;
 import com.example.mypc.relaxsound.util.PlayerConstants;
 import com.example.mypc.relaxsound.util.UtilFunctions;
+import com.google.android.gms.ads.AdListener;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.InterstitialAd;
 
 import java.io.ByteArrayOutputStream;
 import java.util.List;
@@ -46,10 +49,10 @@ public class RelaxActivity extends Activity implements SeekBar.OnSeekBarChangeLi
     static List<ImageView> listBtn;
     ScrollView scroll;
     static int location = -1;
+    InterstitialAd mInterstitialAd;
 
     ImageView img_settime, img_share, img_s2b;
     LinearLayout root;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -58,9 +61,20 @@ public class RelaxActivity extends Activity implements SeekBar.OnSeekBarChangeLi
         setFinishOnTouchOutside(false);
         setContentView(R.layout.relax_activity);
         context = RelaxActivity.this;
+        mInterstitialAd = new InterstitialAd(this);
+        mInterstitialAd.setAdUnitId(getString(R.string.interstitial_full_screen));
+
+        AdRequest adRequest = new AdRequest.Builder()
+                .build();
+        mInterstitialAd.loadAd(adRequest);
+
+        mInterstitialAd.setAdListener(new AdListener() {
+            public void onAdLoaded() {
+                showInterstitial();
+            }
+        });
         init();
     }
-
     public static void setFirstState() {
         btnPause.setEnabled(false);
         btnPlay.setEnabled(false);
@@ -82,6 +96,7 @@ public class RelaxActivity extends Activity implements SeekBar.OnSeekBarChangeLi
         }
         setListItems();
         setListeners();
+
     }
 
     private static void setListItems() {
@@ -103,6 +118,7 @@ public class RelaxActivity extends Activity implements SeekBar.OnSeekBarChangeLi
             public void handleMessage(Message msg) {
                 int time = (int) msg.obj;
                 sbar.setProgress(time);
+                tvTime.setText(settime(time));
                 if (time == 0 && PlayerConstants.SONG_PAUSED == false) {
 
                     PlayerConstants.TIME = 0;
@@ -119,6 +135,7 @@ public class RelaxActivity extends Activity implements SeekBar.OnSeekBarChangeLi
         @Override
         public void onClick(View v) {
             int position = (Integer) v.getTag();
+            PlayerConstants.SONG_NUMBER=position;
             if (PlayerConstants.SONGS_LIST.get(position).isplay()) {
                 location = -1;
                 PlayerConstants.SONGS_LIST.get(position).setIsplay(false);
@@ -163,7 +180,13 @@ public class RelaxActivity extends Activity implements SeekBar.OnSeekBarChangeLi
                 }
             }
             changeUI();
+
         } catch (Exception e) {
+        }
+    }
+    private void showInterstitial() {
+        if (mInterstitialAd.isLoaded()) {
+            mInterstitialAd.show();
         }
     }
 
@@ -214,7 +237,6 @@ public class RelaxActivity extends Activity implements SeekBar.OnSeekBarChangeLi
                 startActivity(intent);
             }
         });
-
         img_share.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -239,6 +261,21 @@ public class RelaxActivity extends Activity implements SeekBar.OnSeekBarChangeLi
             tvTime.setText(settime(time));
             PlayerConstants.TIME = time;
             setProgessBar(time);
+            boolean isServiceRunning = UtilFunctions.isServiceRunning(SongService.class.getName(), context);
+            if (!isServiceRunning) {
+                Intent i = new Intent(context, SongService.class);
+                context.startService(i);
+            } else {
+                PlayerConstants.SONG_CHANGE_HANDLER.sendMessage(PlayerConstants.SONG_CHANGE_HANDLER.obtainMessage());
+            }
+            if (SongService.checkplay() == -1) {
+                setFirstState();
+                PlayerConstants.TIME = 0;
+                tvTime.setText(settime(0));
+                bar.setVisibility(View.INVISIBLE);
+                Intent i = new Intent(context, SongService.class);
+                context.stopService(i);
+            }
         }
     };
 
@@ -263,6 +300,7 @@ public class RelaxActivity extends Activity implements SeekBar.OnSeekBarChangeLi
     }
 
     private static void setListeners() {
+
         btnPlay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -326,9 +364,7 @@ public class RelaxActivity extends Activity implements SeekBar.OnSeekBarChangeLi
 
     @Override
     public void onStartTrackingTouch(SeekBar seekBar) {
-
     }
-
     @Override
     public void onStopTrackingTouch(SeekBar seekBar) {
 

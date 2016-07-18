@@ -4,5 +4,7 @@
     <string name="pause">Pause</string>
     <string name="play">Play</string>
     <string name="player">Audio Player</string>
+
+    <string name="interstitial_full_screen">ca-app-pub-3120536913205473/3021576335</string>
     <string name="next">Next</string>
 </resources>
