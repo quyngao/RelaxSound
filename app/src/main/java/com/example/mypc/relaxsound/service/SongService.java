@@ -48,7 +48,6 @@ public class SongService extends Service implements AudioManager.OnAudioFocusCha
         public ThreadTime() {
             Time.start();
         }
-
         Thread Time = new Thread(new Runnable() {
             @Override
             public void run() {

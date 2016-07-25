@@ -26,6 +26,7 @@ import android.widget.ProgressBar;
 import android.widget.ScrollView;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.mypc.relaxsound.controls.Controls;
 import com.example.mypc.relaxsound.service.SongService;
@@ -118,6 +119,7 @@ public class RelaxActivity extends Activity implements SeekBar.OnSeekBarChangeLi
             public void handleMessage(Message msg) {
                 int time = (int) msg.obj;
                 sbar.setProgress(time);
+                Toast.makeText(context,""+time,Toast.LENGTH_SHORT).show();
                 tvTime.setText(settime(time));
                 if (time == 0 && PlayerConstants.SONG_PAUSED == false) {
 
