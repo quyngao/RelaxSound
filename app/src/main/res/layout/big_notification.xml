@@ -8,7 +8,8 @@
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:id="@+id/bg_noti">
 
         <ImageView
             android:id="@+id/imageViewAlbumArt"
@@ -27,7 +28,6 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
-
                 <TextView
                     android:id="@+id/textSongName"
                     android:layout_width="fill_parent"
@@ -38,12 +38,7 @@
                     android:textColor="@android:color/white"
                     android:textSize="20dp" />
 
-                <Button
-                    android:id="@+id/btnDelete"
-                    android:layout_width="28dp"
-                    android:layout_height="28dp"
-                    android:layout_marginLeft="5dp"
-                    android:background="@drawable/clear" />
+
             </LinearLayout>
 
             <TextView
@@ -70,17 +65,20 @@
                     android:id="@+id/btnPause"
                     android:layout_width="32dp"
                     android:layout_height="32dp"
-                    android:layout_margin="5dp"
                     android:background="@drawable/pause" />
 
                 <Button
                     android:id="@+id/btnPlay"
                     android:layout_width="32dp"
                     android:layout_height="32dp"
-                    android:layout_margin="5dp"
                     android:background="@drawable/play"
                     android:visibility="gone" />
-
+                <Button
+                    android:id="@+id/btnDelete"
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
+                    android:layout_marginLeft="20dp"
+                    android:background="@drawable/clear" />
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>

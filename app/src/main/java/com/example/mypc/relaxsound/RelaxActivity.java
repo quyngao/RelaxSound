@@ -3,6 +3,7 @@ package com.example.mypc.relaxsound;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -54,6 +55,7 @@ public class RelaxActivity extends Activity implements SeekBar.OnSeekBarChangeLi
 
     ImageView img_settime, img_share, img_s2b;
     LinearLayout root;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -65,6 +67,10 @@ public class RelaxActivity extends Activity implements SeekBar.OnSeekBarChangeLi
         mInterstitialAd = new InterstitialAd(this);
         mInterstitialAd.setAdUnitId(getString(R.string.interstitial_full_screen));
 
+        if (PlayerConstants.TIME == 0) {
+            SharedPreferences pre = context.getSharedPreferences("myData", context.MODE_PRIVATE);
+            PlayerConstants.TIME = pre.getInt("time", 0);
+        }
         AdRequest adRequest = new AdRequest.Builder()
                 .build();
         mInterstitialAd.loadAd(adRequest);
@@ -76,6 +82,7 @@ public class RelaxActivity extends Activity implements SeekBar.OnSeekBarChangeLi
         });
         init();
     }
+
     public static void setFirstState() {
         btnPause.setEnabled(false);
         btnPlay.setEnabled(false);
@@ -119,10 +126,8 @@ public class RelaxActivity extends Activity implements SeekBar.OnSeekBarChangeLi
             public void handleMessage(Message msg) {
                 int time = (int) msg.obj;
                 sbar.setProgress(time);
-                Toast.makeText(context,""+time,Toast.LENGTH_SHORT).show();
-                tvTime.setText(settime(time));
+                tvTime.setText(settime(time + 1));
                 if (time == 0 && PlayerConstants.SONG_PAUSED == false) {
-
                     PlayerConstants.TIME = 0;
                     tvTime.setText(settime(0));
                     bar.setVisibility(View.INVISIBLE);
@@ -137,7 +142,7 @@ public class RelaxActivity extends Activity implements SeekBar.OnSeekBarChangeLi
         @Override
         public void onClick(View v) {
             int position = (Integer) v.getTag();
-            PlayerConstants.SONG_NUMBER=position;
+            PlayerConstants.SONG_NUMBER = position;
             if (PlayerConstants.SONGS_LIST.get(position).isplay()) {
                 location = -1;
                 PlayerConstants.SONGS_LIST.get(position).setIsplay(false);
@@ -186,6 +191,7 @@ public class RelaxActivity extends Activity implements SeekBar.OnSeekBarChangeLi
         } catch (Exception e) {
         }
     }
+
     private void showInterstitial() {
         if (mInterstitialAd.isLoaded()) {
             mInterstitialAd.show();
@@ -217,6 +223,7 @@ public class RelaxActivity extends Activity implements SeekBar.OnSeekBarChangeLi
         bar.setOnSeekBarChangeListener(this);
         Typeface font_text = Typeface.createFromAsset(this.getAssets(), "fontchu.otf");
         tvTime.setTypeface(font_text);
+        tvTime.setText(settime(PlayerConstants.TIME));
         img_settime = (ImageView) findViewById(R.id.img_settime);
         img_share = (ImageView) findViewById(R.id.img_share);
         img_s2b = (ImageView) findViewById(R.id.img_s2b);
@@ -367,6 +374,7 @@ public class RelaxActivity extends Activity implements SeekBar.OnSeekBarChangeLi
     @Override
     public void onStartTrackingTouch(SeekBar seekBar) {
     }
+
     @Override
     public void onStopTrackingTouch(SeekBar seekBar) {
 

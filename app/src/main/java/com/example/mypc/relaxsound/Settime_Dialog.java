@@ -4,6 +4,7 @@ import android.app.Dialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.os.Handler;
 import android.os.Message;
@@ -34,7 +35,9 @@ public class Settime_Dialog extends Dialog {
         setContentView(R.layout.settime_activity);
         getWindow().setBackgroundDrawableResource(R.color.trongsuot);
         mcontext = context;
-        this.time = timesx;
+
+        SharedPreferences pre = context.getSharedPreferences("myData", context.MODE_PRIVATE);
+        this.time = pre.getInt("time",0);
 
         time = time /60;
         tv_custime = (TextView) findViewById(R.id.tv_custime);
@@ -109,6 +112,11 @@ public class Settime_Dialog extends Dialog {
             public void onDismiss(DialogInterface dialog) {
                 Message message = handler.obtainMessage();
                 time = time *60;
+
+                SharedPreferences pre = context.getSharedPreferences("myData", context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = pre.edit();
+                editor.putInt("time", time);
+                editor.commit();
                 message.arg1 = time;
                 handler.sendMessage(message);
             }

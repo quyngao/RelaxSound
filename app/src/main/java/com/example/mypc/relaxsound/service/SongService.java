@@ -72,12 +72,16 @@ public class SongService extends Service implements AudioManager.OnAudioFocusCha
                 }
             }
         });
-
         Handler hTime = new Handler() {
             @Override
             public void handleMessage(Message msg) {
                 super.handleMessage(msg);
                 time--;
+                if(time==0){
+                    synchronized (objectTime){
+                        objectTime.notifyAll();
+                    }
+                }
                 try{
                     PlayerConstants.PROGRESSBAR_HANDLER.sendMessage(PlayerConstants.PROGRESSBAR_HANDLER.obtainMessage(0,time));
                 }catch(Exception e){
@@ -143,7 +147,7 @@ public class SongService extends Service implements AudioManager.OnAudioFocusCha
         PlayerConstants.TIME =0;
         stopMusic();
         PlayerConstants.SONGS_LIST = UtilFunctions.listOfSongs(getApplicationContext());
-        PlayerConstants.SONG_PAUSED = false;
+        PlayerConstants.SONG_PAUSED = true;
         RelaxActivity.changeUI();
         super.onDestroy();
     }
