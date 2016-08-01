@@ -145,6 +145,7 @@ public class RelaxActivity extends Activity implements SeekBar.OnSeekBarChangeLi
             PlayerConstants.SONG_NUMBER = position;
             if (PlayerConstants.SONGS_LIST.get(position).isplay()) {
                 location = -1;
+
                 PlayerConstants.SONGS_LIST.get(position).setIsplay(false);
                 bar.setVisibility(View.INVISIBLE);
                 PlayerConstants.SONGS_LIST.get(position).pause();
