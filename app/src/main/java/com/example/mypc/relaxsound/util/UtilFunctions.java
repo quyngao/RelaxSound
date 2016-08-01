@@ -1,20 +1,11 @@
 package com.example.mypc.relaxsound.util;
 
 import android.app.ActivityManager;
-import android.content.ContentUris;
 import android.content.Context;
-import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.net.Uri;
-import android.os.ParcelFileDescriptor;
-import android.provider.MediaStore;
-import android.util.Log;
 import android.widget.ImageView;
 
 import com.example.mypc.relaxsound.R;
 
-import java.io.FileDescriptor;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,11 +16,12 @@ public class UtilFunctions {
     public final static int[] icons = {R.drawable.icon1, R.drawable.icon2,
             R.drawable.icon3, R.drawable.icon4, R.drawable.icon5,
             R.drawable.icon6, R.drawable.icon7, R.drawable.icon8,
-            R.drawable.icon9, R.drawable.icon10, R.drawable.icon11,
+            R.drawable.icon9,
+            R.drawable.icon10, R.drawable.icon11,
             R.drawable.icon12, R.drawable.icon13, R.drawable.icon14
             , R.drawable.icon15, R.drawable.icon16, R.drawable.icon17
-            , R.drawable.icon18, R.drawable.icon19, R.drawable.icon20};
-
+            , R.drawable.icon18, R.drawable.icon19, R.drawable.icon20
+    };
     public final static int[] mp3 = {R.raw.music1, R.raw.music2, R.raw.music3,
             R.raw.music4, R.raw.music5, R.raw.music6, R.raw.music7,
             R.raw.music8, R.raw.music9, R.raw.music10, R.raw.music11,
@@ -37,11 +29,11 @@ public class UtilFunctions {
             , R.raw.music15, R.raw.music16, R.raw.music17, R.raw.music18
             , R.raw.music19, R.raw.music20};
 
-    public final static String[] title = {"air fan","at night","cafe","campus library",
-            "couttry side","fire","forest","guitar",
-            "leaves","ocean waves","piano","rain",
-            "river","road","snow storm","stars ship",
-            "thunder","train","wind chime","wind",};
+    public final static String[] title = {"air fan", "at night", "cafe", "campus library",
+            "couttry side", "fire", "forest", "guitar",
+            "leaves", "ocean waves", "piano", "rain",
+            "river", "road", "snow storm", "stars ship",
+            "thunder", "train", "wind chime", "wind",};
 
 
     public static boolean isServiceRunning(String serviceName, Context context) {
@@ -58,7 +50,7 @@ public class UtilFunctions {
         ArrayList<MediaItem> list = new ArrayList<MediaItem>();
 
         for (int i = 0; i < icons.length; i++) {
-            MediaItem im = new MediaItem(icons[i], mp3[i],title[i], context
+            MediaItem im = new MediaItem(icons[i], mp3[i], title[i], context
             );
             list.add(im);
         }
