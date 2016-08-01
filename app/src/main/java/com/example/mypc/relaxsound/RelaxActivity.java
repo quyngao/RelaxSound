@@ -152,6 +152,15 @@ public class RelaxActivity extends Activity implements SeekBar.OnSeekBarChangeLi
                 location = position;
                 PlayerConstants.SONGS_LIST.get(position).setIsplay(true);
                 unSetFirstState();
+                bar.setProgress(PlayerConstants.SONGS_LIST.get(location).getVolume());
+                bar.setVisibility(View.VISIBLE);
+                Handler handler = new Handler();
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        bar.setVisibility(View.INVISIBLE);
+                    }
+                }, 5000);
             }
             boolean isServiceRunning = UtilFunctions.isServiceRunning(SongService.class.getName(), context);
             if (!isServiceRunning) {
@@ -187,7 +196,6 @@ public class RelaxActivity extends Activity implements SeekBar.OnSeekBarChangeLi
                 }
             }
             changeUI();
-
         } catch (Exception e) {
         }
     }
@@ -287,10 +295,9 @@ public class RelaxActivity extends Activity implements SeekBar.OnSeekBarChangeLi
             }
         }
     };
-
     public static String settime(int x) {
-        x = x / 60;
-        if (x == 0) return ".. : ..";
+        if (x == 0) return ".. : ..";        x = x / 60;
+
         int h = x / 60;
         int m = x % 60;
         String s = "";
@@ -350,15 +357,7 @@ public class RelaxActivity extends Activity implements SeekBar.OnSeekBarChangeLi
 
     public static void changeUI() {
         if (location >= 0 && PlayerConstants.SONG_PAUSED == false) {
-            bar.setProgress(PlayerConstants.SONGS_LIST.get(location).getVolume());
-            bar.setVisibility(View.VISIBLE);
-            Handler handler = new Handler();
-            handler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    bar.setVisibility(View.INVISIBLE);
-                }
-            }, 5000);
+
         }
         setListItems();
         changeButton();

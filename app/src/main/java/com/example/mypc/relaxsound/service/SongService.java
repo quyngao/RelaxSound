@@ -48,6 +48,7 @@ public class SongService extends Service implements AudioManager.OnAudioFocusCha
         public ThreadTime() {
             Time.start();
         }
+
         Thread Time = new Thread(new Runnable() {
             @Override
             public void run() {
@@ -77,14 +78,14 @@ public class SongService extends Service implements AudioManager.OnAudioFocusCha
             public void handleMessage(Message msg) {
                 super.handleMessage(msg);
                 time--;
-                if(time==0){
-                    synchronized (objectTime){
+                if (time == 0) {
+                    synchronized (objectTime) {
                         objectTime.notifyAll();
                     }
                 }
-                try{
-                    PlayerConstants.PROGRESSBAR_HANDLER.sendMessage(PlayerConstants.PROGRESSBAR_HANDLER.obtainMessage(0,time));
-                }catch(Exception e){
+                try {
+                    PlayerConstants.PROGRESSBAR_HANDLER.sendMessage(PlayerConstants.PROGRESSBAR_HANDLER.obtainMessage(0, time));
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
@@ -132,6 +133,7 @@ public class SongService extends Service implements AudioManager.OnAudioFocusCha
             PlayerConstants.SONGS_LIST.get(i).play();
         }
     }
+
     public String gettitle() {
         String s = "list : ";
         for (int i = 0; i < PlayerConstants.SONGS_LIST.size(); i++) {
@@ -144,13 +146,14 @@ public class SongService extends Service implements AudioManager.OnAudioFocusCha
 
     @Override
     public void onDestroy() {
-        PlayerConstants.TIME =0;
+        PlayerConstants.TIME = 0;
         stopMusic();
         PlayerConstants.SONGS_LIST = UtilFunctions.listOfSongs(getApplicationContext());
         PlayerConstants.SONG_PAUSED = true;
         RelaxActivity.changeUI();
         super.onDestroy();
     }
+
     @SuppressLint("NewApi")
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
@@ -164,12 +167,13 @@ public class SongService extends Service implements AudioManager.OnAudioFocusCha
             objectTime = new Object();
             if (checkplay() >= 0) {
                 PlayerConstants.SONG_PAUSED = false;
-                if(PlayerConstants.TIME>0){
+                if (PlayerConstants.TIME > 0) {
                     time = PlayerConstants.TIME;
-                    PlayerConstants.SONG_PAUSED=false;
+                    PlayerConstants.SONG_PAUSED = false;
                     new ThreadTime();
                 }
-                if(PlayerConstants.SONG_NUMBER>=0)PlayerConstants.SONGS_LIST.get(PlayerConstants.SONG_NUMBER).play();
+                if (PlayerConstants.SONG_NUMBER >= 0)
+                    PlayerConstants.SONGS_LIST.get(PlayerConstants.SONG_NUMBER).play();
             }
             RelaxActivity.changeUI();
             newNotification();
@@ -181,9 +185,9 @@ public class SongService extends Service implements AudioManager.OnAudioFocusCha
                     else PlayerConstants.SONG_PAUSED = true;
                     newNotification();
                     playSong();
-                    if(PlayerConstants.TIME>0){
+                    if (PlayerConstants.TIME > 0) {
                         time = PlayerConstants.TIME;
-                        PlayerConstants.SONG_PAUSED=false;
+                        PlayerConstants.SONG_PAUSED = false;
                         new ThreadTime();
                     }
                     RelaxActivity.changeUI();
@@ -234,7 +238,8 @@ public class SongService extends Service implements AudioManager.OnAudioFocusCha
         Intent intent = new Intent(this, RelaxActivity.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, NOTIFICATION_ID,
                 intent, PendingIntent.FLAG_UPDATE_CURRENT);
-        view.setOnClickPendingIntent(R.id.bg_noti, pendingIntent);
+        view.setOnClickPendingIntent(R.id.imageViewAlbumArt, pendingIntent);
+        view.setOnClickPendingIntent(R.id.textSongName, pendingIntent);
         PendingIntent pDelete = PendingIntent.getBroadcast(getApplicationContext(), 0, delete, PendingIntent.FLAG_UPDATE_CURRENT);
         view.setOnClickPendingIntent(R.id.btnDelete, pDelete);
         PendingIntent pPause = PendingIntent.getBroadcast(getApplicationContext(), 0, pause, PendingIntent.FLAG_UPDATE_CURRENT);
@@ -242,7 +247,6 @@ public class SongService extends Service implements AudioManager.OnAudioFocusCha
         PendingIntent pPlay = PendingIntent.getBroadcast(getApplicationContext(), 0, play, PendingIntent.FLAG_UPDATE_CURRENT);
         view.setOnClickPendingIntent(R.id.btnPlay, pPlay);
     }
-
     @SuppressLint("NewApi")
     private void newNotification() {
         String songName = gettitle();
@@ -307,7 +311,8 @@ public class SongService extends Service implements AudioManager.OnAudioFocusCha
             UpdateMetadata();
             remoteControlClient.setPlaybackState(RemoteControlClient.PLAYSTATE_PLAYING);
         }
-        if(PlayerConstants.SONG_NUMBER>=0)PlayerConstants.SONGS_LIST.get(PlayerConstants.SONG_NUMBER).play();
+        if (PlayerConstants.SONG_NUMBER >= 0)
+            PlayerConstants.SONGS_LIST.get(PlayerConstants.SONG_NUMBER).play();
     }
 
     @SuppressLint("NewApi")
