@@ -3,10 +3,8 @@ package com.example.mypc.relaxsound.receiver;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
 import android.view.KeyEvent;
 
-import com.example.mypc.relaxsound.RelaxActivity;
 import com.example.mypc.relaxsound.controls.Controls;
 import com.example.mypc.relaxsound.service.SongService;
 import com.example.mypc.relaxsound.util.PlayerConstants;
@@ -49,9 +47,6 @@ public class NotificationBroadcast extends BroadcastReceiver {
             } else if (intent.getAction().equals(SongService.NOTIFY_DELETE)) {
                 Intent i = new Intent(context, SongService.class);
                 context.stopService(i);
-                Intent in = new Intent(context, RelaxActivity.class);
-                in.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                context.startActivity(in);
             }
         }
     }

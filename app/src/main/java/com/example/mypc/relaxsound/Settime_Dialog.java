@@ -27,6 +27,8 @@ public class Settime_Dialog extends Dialog {
     ArrayList<ImageView> list_time;
     Context mcontext;
     int time;
+    int ischange;
+
     public Settime_Dialog(final Context context, final int timesx, final Handler handler) {
 
         super(context);
@@ -35,11 +37,11 @@ public class Settime_Dialog extends Dialog {
         setContentView(R.layout.settime_activity);
         getWindow().setBackgroundDrawableResource(R.color.trongsuot);
         mcontext = context;
-
+        ischange = 0;
         SharedPreferences pre = context.getSharedPreferences("myData", context.MODE_PRIVATE);
-        this.time = pre.getInt("time",0);
+        this.time = pre.getInt("time", 0);
 
-        time = time /60;
+        time = time / 60;
         tv_custime = (TextView) findViewById(R.id.tv_custime);
         et_custime = (TextView) findViewById(R.id.et_custume);
         bt_timepicker = (ImageView) findViewById(R.id.bt_timepicker);
@@ -47,8 +49,9 @@ public class Settime_Dialog extends Dialog {
         et_custime.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                ischange = 1;
                 for (int i = 0; i < list_time.size(); i++) {
-                        list_time.get(i).setBackgroundResource(R.drawable.bg_timecu);
+                    list_time.get(i).setBackgroundResource(R.drawable.bg_timecu);
                 }
                 TimePickerDialog tpd = new TimePickerDialog(mcontext,
                         new TimePickerDialog.OnTimeSetListener() {
@@ -63,7 +66,7 @@ public class Settime_Dialog extends Dialog {
                                 et_custime.setText(s);
                                 time = hourOfDay * 60 + minute;
                             }
-                        }, 0, 0,true);
+                        }, 0, 0, true);
                 tpd.show();
             }
         });
@@ -102,6 +105,7 @@ public class Settime_Dialog extends Dialog {
             @Override
             public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
                 if (keyCode == KeyEvent.KEYCODE_BACK) {
+                    ischange=0;
                     Settime_Dialog.this.dismiss();
                 }
                 return false;
@@ -111,13 +115,13 @@ public class Settime_Dialog extends Dialog {
             @Override
             public void onDismiss(DialogInterface dialog) {
                 Message message = handler.obtainMessage();
-                time = time *60;
-
+                time = time * 60;
                 SharedPreferences pre = context.getSharedPreferences("myData", context.MODE_PRIVATE);
                 SharedPreferences.Editor editor = pre.edit();
                 editor.putInt("time", time);
                 editor.commit();
                 message.arg1 = time;
+                message.arg2= ischange;
                 handler.sendMessage(message);
             }
         });
@@ -126,6 +130,7 @@ public class Settime_Dialog extends Dialog {
     View.OnClickListener onclick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+            ischange = 1;
             for (int i = 0; i < list_time.size(); i++) {
                 if (list_time.get(i).getTag() == v.getTag()) {
                     time = (int) v.getTag();

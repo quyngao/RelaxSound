@@ -247,6 +247,7 @@ public class SongService extends Service implements AudioManager.OnAudioFocusCha
         PendingIntent pPlay = PendingIntent.getBroadcast(getApplicationContext(), 0, play, PendingIntent.FLAG_UPDATE_CURRENT);
         view.setOnClickPendingIntent(R.id.btnPlay, pPlay);
     }
+
     @SuppressLint("NewApi")
     private void newNotification() {
         String songName = gettitle();

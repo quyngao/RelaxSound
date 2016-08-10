@@ -16,6 +16,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.Display;
 import android.view.View;
 import android.view.Window;
@@ -67,10 +68,7 @@ public class RelaxActivity extends Activity implements SeekBar.OnSeekBarChangeLi
         mInterstitialAd = new InterstitialAd(this);
         mInterstitialAd.setAdUnitId(getString(R.string.interstitial_full_screen));
 
-        if (PlayerConstants.TIME == 0) {
-            SharedPreferences pre = context.getSharedPreferences("myData", context.MODE_PRIVATE);
-            PlayerConstants.TIME = pre.getInt("time", 0);
-        }
+
         AdRequest adRequest = new AdRequest.Builder()
                 .build();
         mInterstitialAd.loadAd(adRequest);
@@ -96,7 +94,31 @@ public class RelaxActivity extends Activity implements SeekBar.OnSeekBarChangeLi
     }
 
     private void init() {
+
         getViews();
+        if (PlayerConstants.TIME == 0) {
+            SharedPreferences pre = context.getSharedPreferences("myData", context.MODE_PRIVATE);
+            PlayerConstants.TIME = pre.getInt("time", 0);
+            tvTime.setText(settime(PlayerConstants.TIME));
+            setProgessBar(PlayerConstants.TIME);
+
+        }
+        PlayerConstants.PROGRESSBAR_HANDLER = new Handler() {
+            @Override
+            public void handleMessage(Message msg) {
+                int time = (int) msg.obj;
+                Log.e("time", "" + time);
+                sbar.setProgress(time);
+                tvTime.setText(settime(time + 59));
+                if (time == 0 && PlayerConstants.SONG_PAUSED == false) {
+                    PlayerConstants.TIME = 0;
+                    tvTime.setText(settime(0));
+                    bar.setVisibility(View.INVISIBLE);
+                    Intent i = new Intent(context, SongService.class);
+                    context.stopService(i);
+                }
+            }
+        };
         if (PlayerConstants.SONGS_LIST.size() <= 0) {
             PlayerConstants.SONGS_LIST = UtilFunctions.listOfSongs(getApplicationContext());
         } else {
@@ -121,21 +143,7 @@ public class RelaxActivity extends Activity implements SeekBar.OnSeekBarChangeLi
             gridLayout.addView(i);
             i.setOnClickListener(Click);
         }
-        PlayerConstants.PROGRESSBAR_HANDLER = new Handler() {
-            @Override
-            public void handleMessage(Message msg) {
-                int time = (int) msg.obj;
-                sbar.setProgress(time);
-                tvTime.setText(settime(time + 1));
-                if (time == 0 && PlayerConstants.SONG_PAUSED == false) {
-                    PlayerConstants.TIME = 0;
-                    tvTime.setText(settime(0));
-                    bar.setVisibility(View.INVISIBLE);
-                    Intent i = new Intent(context, SongService.class);
-                    context.stopService(i);
-                }
-            }
-        };
+
     }
 
     static View.OnClickListener Click = new View.OnClickListener() {
@@ -172,8 +180,10 @@ public class RelaxActivity extends Activity implements SeekBar.OnSeekBarChangeLi
             }
             if (SongService.checkplay() == -1) {
                 setFirstState();
-                PlayerConstants.TIME = 0;
-                tvTime.setText(settime(0));
+                SharedPreferences pre = context.getSharedPreferences("myData", context.MODE_PRIVATE);
+                int time = pre.getInt("time", 0);
+                PlayerConstants.TIME = time;
+                tvTime.setText(settime(time));
                 bar.setVisibility(View.INVISIBLE);
                 Intent i = new Intent(context, SongService.class);
                 context.stopService(i);
@@ -270,12 +280,13 @@ public class RelaxActivity extends Activity implements SeekBar.OnSeekBarChangeLi
             }
         });
     }
-
     private Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
             int time = msg.arg1;
+            int ischange = msg.arg2;
+            Toast.makeText(RelaxActivity.this, "" + ischange, Toast.LENGTH_SHORT).show();
             tvTime.setText(settime(time));
             PlayerConstants.TIME = time;
             setProgessBar(time);
@@ -284,20 +295,15 @@ public class RelaxActivity extends Activity implements SeekBar.OnSeekBarChangeLi
                 Intent i = new Intent(context, SongService.class);
                 context.startService(i);
             } else {
-                PlayerConstants.SONG_CHANGE_HANDLER.sendMessage(PlayerConstants.SONG_CHANGE_HANDLER.obtainMessage());
+                if(ischange==1)PlayerConstants.SONG_CHANGE_HANDLER.sendMessage(PlayerConstants.SONG_CHANGE_HANDLER.obtainMessage());
             }
-            if (SongService.checkplay() == -1) {
-                setFirstState();
-                PlayerConstants.TIME = 0;
-                tvTime.setText(settime(0));
-                bar.setVisibility(View.INVISIBLE);
-                Intent i = new Intent(context, SongService.class);
-                context.stopService(i);
-            }
+
         }
     };
+
     public static String settime(int x) {
-        if (x == 0) return ".. : ..";        x = x / 60;
+        if (x == 0) return ".. : ..";
+        x = x / 60;
 
         int h = x / 60;
         int m = x % 60;
