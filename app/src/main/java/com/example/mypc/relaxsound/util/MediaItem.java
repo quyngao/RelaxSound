@@ -20,7 +20,6 @@ public class MediaItem {
     public boolean isplay() {
         return isplay;
     }
-
     public MediaItem(int bg, int mp3, String title, Context context) {
 
         isplay = false;
